@@ -1,0 +1,54 @@
+/* Custom styles for MovieDetailPage */
+.movie-detail-container {
+    color: white;
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .movie-poster {
+    width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  .key-people-grid {
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .key-people-grid table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2a2a2a;
+  }
+  
+  .key-people-grid th, .key-people-grid td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+  }
+  
+  .key-people-grid th {
+    background-color: #444;
+    color: white;
+  }
+  
+  .key-people-grid tr:nth-child(even) {
+    background-color: #333;
+  }
+  
+  .key-people-grid tr:hover {
+    background-color: #555;
+  }
+  
+  .key-people-grid a {
+    color: #56ccf2;
+    text-decoration: none;
+  }
+  
+  .key-people-grid a:hover {
+    text-decoration: underline;
+  }
+  

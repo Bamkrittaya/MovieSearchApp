@@ -1,0 +1,66 @@
+/* Custom styles for PersonDetailPage */
+.person-detail-container {
+    color: white;
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .person-detail-container h1,
+  .person-detail-container h2 {
+    margin-bottom: 10px;
+  }
+  
+  .person-detail-container ul {
+    margin-top: 10px;
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .person-detail-container li {
+    margin-bottom: 5px;
+  }
+  
+  /* Custom styles for Roles in Movies grid */
+  .roles-grid {
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .roles-grid table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #2a2a2a;
+  }
+  
+  .roles-grid th,
+  .roles-grid td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #444;
+  }
+  
+  .roles-grid th {
+    background-color: #444;
+    color: white;
+  }
+  
+  .roles-grid tr:nth-child(even) {
+    background-color: #333;
+  }
+  
+  .roles-grid tr:hover {
+    background-color: #555;
+  }
+  
+  .roles-grid a.movie-link {
+    color: #56ccf2;
+    text-decoration: none;
+  }
+  
+  .roles-grid a.movie-link:hover {
+    text-decoration: underline;
+  }
+  
