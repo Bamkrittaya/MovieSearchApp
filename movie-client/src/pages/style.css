@@ -1,0 +1,564 @@
+/* MovieDetailPage */
+.movie-detail-container {
+  color: rgb(81, 40, 130);
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center; /* Ensure everything inside is centered */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ensures centering of h2 */
+}
+
+
+.movie-detail-1{
+  font-size: 18px;
+}
+.key-people {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 20px;
+  width: 100%; /* Make sure the element takes full width */
+  display: block;
+}
+  .rating {
+    font-size: 15px;
+    padding: 0px 18px 10px;
+    border: #b673de;
+    border: 2px solid #ccc; /* Add a solid 2px border with light gray color */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    background-color: #f9f9f9; /* Optional: Add a background color */
+  }
+  .movie-poster {
+    width: 200px;
+    margin-bottom: 20px;
+  }
+ .movie-detail{
+  max-width: 1000px;
+  margin-left:60px;
+  margin-right:60px;
+
+ }
+  
+  .key-people-grid {
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 90%; /* Ensure it takes the full available width */
+  }
+
+  .plot {
+  font-style: italic;
+  font-size: 18px;
+  }
+  
+  .key-people-grid table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffc4fb;
+    font-weight: 600;
+
+  }
+  .key-people-grid table thead{
+    color: #4b2c6f;
+    font-weight: 800;
+    font-size: larger;
+  }
+  
+  .key-people-grid th, .key-people-grid td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ca9bff;
+  }
+
+  .key-people-grid th {
+    background-color: #b673de;
+
+  }
+  
+  .key-people-grid tr:nth-child(even) {
+    background-color: #ca9bff; /* Default color for even rows */
+  }
+  
+
+  .key-people-grid tr:nth-child(odd) {
+    background-color: #ffc4fb; 
+  }
+  
+
+  .key-people-grid tr:hover {
+    background-color: rgba(255, 255, 255, 0.719);
+  }
+  
+  .key-people-grid a {
+    color: #642c70;
+    font-weight: 800;
+  }
+  
+  .key-people-grid a:hover {
+    text-decoration: underline;
+    color: #7f2d91;
+
+  }
+  .movie-detail-people a{
+    color: #642c70;
+    text-decoration: 'none';
+
+  }
+  .movies-search h1 {
+    font-size: 2.2em;
+    font-weight: 800;
+  }
+
+  
+  @media (min-width: 750px) {
+
+    .movie-poster {
+      margin-right: 20px;
+      float: left;
+    }
+  
+    .movie-detail-1 {
+      /* display: block; */
+      text-align: left;
+      margin-left: 20px;
+      justify-content: left;
+
+    }
+    .rating{
+      margin-right: 20px;
+      float: right;
+    }
+    .rating p{
+      text-align: right;
+    }
+  }
+
+/* ----------------------------------------------------------------------------------------------- */
+
+  /* MoviePage */
+.movies-search{
+  height: 100vh; /* Full height of the page */
+  width: 100%; /* Full width of the page */
+  background-image: url('../assets/MoviepageBG.png'); /* Background image path */
+  background-size: cover; /* Makes sure the background covers the entire container */
+  background-position: center center; /* Centers the background */
+  background-repeat: no-repeat; /* Ensures the image doesn’t repeat */
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+.movies-search h1{
+
+  margin-top: 0;
+}
+/* Custom styles for ag-grid container */
+.ag-grid-container {
+  height: 500px;
+  margin-top: 40px;
+  margin-bottom: 60px;
+  padding-left:10%;
+  padding-right:10%;
+  
+}
+
+/* Custom styles for ag-Grid pagination */
+.ag-theme-alpine .ag-paging-panel {
+  background-color: #b673de; /* Set background color of the pagination bar */
+  color: #330e3b; /* Set text color */
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+/* Pagination controls (next, previous, page numbers) */
+.ag-theme-alpine .ag-paging-panel .ag-paging-button,
+.ag-theme-alpine .ag-paging-panel .ag-page-size-panel select {
+  background-color: #642c70; /* Button background */
+  color: #fff; /* Button text color */
+  border: 2px solid #ca9bff;
+  border-radius: 8px;
+  padding: 5px 10px;
+  margin: 0 5px;
+  font-weight: 800;
+  cursor: pointer;
+  
+}
+
+/* Pagination buttons on hover */
+.ag-theme-alpine .ag-paging-panel .ag-paging-button:hover,
+.ag-theme-alpine .ag-theme-alpine .ag-paging-panel .ag-page-size-panel select:hover {
+  background-color: #7f2d91; /* Change color on hover */
+  border-color: #fff;
+  text-decoration: underline;
+
+  
+}
+
+/* Active page button */
+.ag-theme-alpine .ag-paging-panel .ag-paging-button[aria-pressed="true"] {
+  background-color: #ca9bff;
+  color: #4b2c6f; /* Color for the active button */
+  border-color: #b673de;
+  
+}
+
+/* Custom page size dropdown */
+.ag-theme-alpine .ag-paging-panel .ag-page-size-panel select {
+  background-color: #b673de;
+  color: #fff;
+  border-radius: 8px;
+  /* border: 2px solid #ca9bff; */
+  padding: 5px;
+  font-weight: 600;
+  text-decoration: underline;
+
+}
+
+.ag-theme-alpine .ag-paging-panel .ag-page-size-panel select:hover {
+  background-color: #7f2d91;
+  border-color: #fff;
+  text-decoration: underline;
+
+}
+
+/* Pagination dropdown on focus */
+.ag-theme-alpine .ag-paging-panel .ag-page-size-panel select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(75, 75, 75, 0.5);
+  text-decoration: underline;
+  
+
+}
+
+/* Add custom styles for ag-Grid */
+.ag-theme-alpine {
+  --ag-border-color: #ca9bff;
+  --ag-header-background-color: #b673de;
+  --ag-header-font-weight: 1000;
+  --ag-header-font-size: 18px;
+  --ag-header-text-align: center;
+  --ag-font-family: 'Arial', sans-serif;
+  --ag-font-size: 17px;
+  --ag-font-color: #4b2c6f;
+  --ag-row-hover-color: rgba(255, 255, 255, 0.719);
+  --ag-row-border-radius: 8px;
+  --ag-background-color: #ca9bff;
+
+}
+
+.ag-theme-alpine .ag-header-cell {
+  color: #4b2c6f;
+  
+}
+
+.ag-theme-alpine .ag-cell {
+  color: rgb(81, 40, 130);
+
+}
+
+.ag-theme-alpine .ag-row-even {
+  background-color: #ca9bff;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-weight: 600;
+  
+}
+
+.ag-theme-alpine .ag-row-odd {
+  background-color: #ffc4fb;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-weight: 600;
+
+}
+
+.ag-theme-alpine .ag-row:hover {
+  background-color: rgba(255, 255, 255, 0.719);
+  color: #7f2d91;
+
+}
+.ag-theme-alpine .ag-cell:hover {
+  color: #7f2d91;
+  text-decoration: underline;
+
+}
+
+.ag-theme-alpine .ag-cell a {
+  color: #33133a;
+  font-weight: 1000;
+}
+
+.ag-theme-alpine .ag-cell a:hover {
+  text-decoration: underline;
+  color: #7f2d91;
+}
+
+
+
+/* ----------------------------------------------------------------------------------------------- */
+/*login page and register page*/
+/* Styling for the movie title input field */
+input[type="text"], input[type="email"], input[type="password"] {
+  background-color: #f9f9f9;
+  color: #642c70;
+  border: 2px solid #b673de;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  width: 250px;
+  margin-bottom: 10px;
+}
+
+input[type="text"]:focus , input[type="email"]:focus, input[type="password"]:focus {
+  outline: none;
+  border-color: #7f2d91;
+  background-color: #fff;
+}
+
+
+/* Styling for the year select dropdown */
+select {
+  background-color: #f9f9f9;
+  color: #642c70;
+  border: 2px solid #b673de;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  width: 250px;
+  margin-bottom: 10px;
+}
+
+select:focus {
+  outline: none;
+  border-color: #7f2d91;
+  background-color: #fff;
+}
+
+/* Styling for the Search button */
+button {
+  background-color: #b673de;
+  color: #fff;
+  border: 2px solid #7f2d91;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 250px;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #7f2d91;
+  border-color: #fff;
+  color: #fff;
+}
+
+/* Wrapper for the search bar */
+.search-bar-wrapper {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.movies-search {
+  /* margin-top: 20px; */
+  font-size: 24px;
+  color: #512882;
+  font-weight: 800;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; 
+  gap: 5px;
+  width: 250px; 
+  margin: 0 auto; 
+}
+
+.login-form input, .login-form button {
+  width: 100%; 
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+/* ----------------------------------------------------------------------------------------------- */
+/* Homepage */
+.hero-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;  /* Aligns the text vertically in the center */
+  height: 850px; /* 100% of the viewport height */
+  width: 100%; /* Full width of the viewport */
+  background-image: url('../assets/MovieHero.png'); /* Set the image as the background */
+  background-size: cover; /* Makes the image cover the entire container */
+  background-position: center center; /* Centers the background image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+}
+
+.hero-section h1{
+  /* display: flex; */
+  /* justify-content: center; */
+  align-items: center;
+  margin: 0;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+}
+
+
+.hero-heading h1{
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #7f2d91;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Adds shadow for better readability */
+  margin: 0; /* Removes any default margin */
+  padding: 20px; /* Adds space around the text */
+  text-align: center; /* Center-aligns the text */
+  width: 100%; /* Ensures the heading stretches across the full width */
+}
+
+.hero-heading p{
+  font-size: 1.2rem;
+  color: #512882;
+  margin-top: 30px;
+}
+
+/*------------------------------------------------------------------------------------------------ */
+/* Common color for both MovieDetailPage and PersonDetailPage */
+.common-text-color {
+  color: #512882; /* Color used in MovieDetailPage */
+}
+
+/* PersonDetailPage styles */
+.person-detail-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.person-detail{
+  display: flex;
+}
+.person-detail p{
+margin-left: 20px;
+margin-right: 20px;
+}
+.person-detail-container h1,
+.person-detail-container h2,
+.person-detail-container h3 {
+  /* Apply the common color to all header tags */
+  color: rgb(81, 40, 130); 
+  margin-bottom: 10px;
+}
+
+.person-detail-container ul {
+  margin-top: 10px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.person-detail-container li {
+  margin-bottom: 5px;
+}
+
+/* Custom styles for Roles in Movies grid */
+.roles-grid {
+  margin-top: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  margin-bottom: 40px;
+}
+
+.roles-grid table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffc4fb;
+  font-weight: 600;
+}
+.roles-grid table thead{
+  font-size: larger;
+}
+
+.roles-grid th,
+.roles-grid td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ca9bff;
+}
+
+.roles-grid th {
+  background-color: #b673de;
+
+
+}
+
+.roles-grid tr:nth-child(even) {
+  background-color: #ca9bff;
+}
+
+/* 
+.roles-grid tr:first-child {
+  background-color: #d4a1ff;
+} */
+
+.kroles-gridtr:nth-child(odd) {
+  background-color: #ffc4fb;
+}
+
+.roles-grid tr:hover {
+  background-color: rgba(255, 255, 255, 0.719);
+}
+
+.roles-grid a {
+  color: #512882;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.roles-grid a:hover {
+  text-decoration: underline;
+  color: #7f2d91;
+}
+ 
+/* Custom styles for IMDB Rating Distribution chart */
+.chart-container {
+  margin-top: 20px;
+  margin-bottom: 60px;
+  padding: 20px;
+  background-color: #ffc4fb;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  width: 80%; /* Ensure it takes full width */
+  height: 500px; /* Adjust the height as needed */
+}
+
+.chart-container h2 {
+  margin-top: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #56ccf2;
+}
+
+.chart-container canvas {
+  max-width: 100%;
+  height: 100%; /* Adjust the height to 100% of the container */
+  height: auto;
+  display: block;
+  margin: 0 ;
+}
+
+/* MovieDetailPage styles */
+
+/* Apply the same color for MovieDetailPage headers */
+

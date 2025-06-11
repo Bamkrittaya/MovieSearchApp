@@ -1,21 +1,25 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  /* max-width: 1280px; */
+  /* margin: 0 auto; */
+  /* padding: 2rem; */
   text-align: center;
+  
 }
+* {
+  font-family: 'Signika', sans-serif;
 
+}
 .logo {
-  height: 6em;
+  height: 10em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #64f5ffaa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #7361fbaa);
 }
 
 @keyframes logo-spin {
@@ -42,18 +46,42 @@
 }
 /* App.css */
 .navbar {
-  background-color: #eee;
-  padding: 10px;
+  background-color: #fcc5ff;
+  /* padding-top: 18px; 
+  padding-bottom: 18px;  */
+  font-size: 20px;
+  text-align: left; 
+  display: flex;
+}
+
+.navbar-email {
+  font-size: 20px;
+  color: #a846be;
+  margin-left: 10px;
+  margin-top: 18px;
+  text-align: right; 
+  font-family: 'Vollkorn', serif;
+
 }
 
 .navbar-link {
-  margin-right: 10px;
+  /* margin-right: 25px;
+  margin-left: 25px;  */
+  color: #a846be;
+  padding: 18px 30px;
+  font-weight: 700;
+  font-family: 'Vollkorn', serif;
 }
-
+.navbar-link:hover {
+  background-color: #a846be;
+  color: #fcc5ff;
+  text-decoration: underline;
+}
 .navbar-nav {
   display: flex;
   justify-content: space-between;
 }
+
 
 .navbar-brand {
   font-size: 1.5rem;
@@ -62,3 +90,5 @@
 .navbar-light {
   background-color: #f8f9fa;
 }
+
+

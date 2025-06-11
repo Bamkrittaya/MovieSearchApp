@@ -9,6 +9,8 @@ import {
 } from "ag-grid-community";
 
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import './style.css'; 
+
 
 // Register modules
 ModuleRegistry.registerModules([
@@ -69,7 +71,7 @@ function MoviesPage() {
   const columnDefs = [
     { field: "title", headerName: "Title", sortable: true, flex: 2 },
     { field: "year", headerName: "Year", sortable: true, flex: 1 },
-    { field: "rank", headerName: "Rank", sortable: true, flex: 1 }
+    { field: "imdbRating", headerName: "IMDB Rating", sortable: true, flex: 1 } // Change 'rank' to 'imdbRating'
   ];
 
   const handleRowClick = (event) => {
@@ -80,10 +82,11 @@ function MoviesPage() {
   };
 
   return (
-    <div>
+    <div className="movies-search">
       <h1>Movie Search</h1>
-      <div>
+      <div className="search-bar-wrapper">
         <input
+          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Enter movie title"
@@ -107,7 +110,8 @@ function MoviesPage() {
 
       <button onClick={searchMovies}>Search</button>
 
-      <div className="ag-theme-alpine" style={{ height: 400, marginTop: 20 }}>
+      <div className="ag-theme-alpine ag-grid-container">
+      {/* style={{ height: 400, marginTop: 20 }} */}
         <AgGridReact
           rowData={filteredMovies}
           columnDefs={columnDefs}

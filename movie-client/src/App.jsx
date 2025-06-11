@@ -6,7 +6,7 @@ import MovieDetailPage from './pages/MovieDetailPage.jsx';
 import PersonDetailPage from './pages/PersonDetailPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import { getToken, clearToken } from './utils/auth'; // Import functions
+import { getToken, getRefreshToken, clearToken, setToken } from './utils/auth'; // Import functions
 import './App.css';
 
 function App() {
@@ -15,71 +15,111 @@ function App() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Function to check if the token is expired
+  const isTokenExpired = (token) => {
+    if (!token) return true;
+
+    const parts = token.split('.');
+    if (parts.length !== 3) return true; // Invalid JWT
+
+    const payload = JSON.parse(atob(parts[1])); // Decode the token's payload
+    const expirationTime = payload.exp * 1000; // Expiry time is in seconds, convert to milliseconds
+
+    return Date.now() >= expirationTime; // Compare expiration time with current time
+  };
+
   // Handle user logout
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem("refreshToken");
-  
-    if (refreshToken) {
-      try {
-        const response = await fetch("http://4.237.58.241:3000/user/logout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refreshToken }),
-        });
-  
-        if (!response.ok) {
-          // If the logout request fails due to an expired token, force the user to log in again
-          console.error("Failed to logout due to expired token, forcing re-login.");
-          
-          // Clear local storage to remove expired tokens
-          clearToken();
-          setIsAuthenticated(false); // Set authentication state to false
-          setEmail(null); // Clear email state
-          localStorage.removeItem("email"); // Remove email from localStorage
-          
-          // Redirect to login page
-          navigate("/login"); 
-          return;
-        }
-  
-        // If logout succeeds (i.e., refresh token was valid), proceed with logout
-        clearToken(); // Clear tokens from localStorage
-        setIsAuthenticated(false); // Set authenticated state to false
-        setEmail(null); // Clear email state
-        localStorage.removeItem("email"); // Remove email from localStorage
-  
-        navigate("/login"); // Redirect to login page
-      } catch (error) {
-        console.error("Error logging out:", error);
-      }
-    } else {
-      // If there's no refresh token in localStorage, force the user to log in again
-      console.error("No refresh token found, forcing re-login.");
-      
-      // Clear local storage
+
+    if (!refreshToken) {
+      // If no refresh token, force the user to log in again
+      console.log("No refresh token found, forcing re-login.");
       clearToken();
-      setIsAuthenticated(false); // Set authenticated state to false
-      setEmail(null); // Clear email state
-      localStorage.removeItem("email"); // Remove email from localStorage
-      
-      // Redirect to login page
+      setIsAuthenticated(false);
+      setEmail(null);
+      localStorage.removeItem("email");
       navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://4.237.58.241:3000/user/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) {
+        // If the logout request fails due to an expired token, force the user to log in again
+        console.error("Failed to logout due to expired token, forcing re-login.");
+        
+        clearToken(); // Clear tokens from localStorage
+        setIsAuthenticated(false);
+        setEmail(null);
+        localStorage.removeItem("email");
+
+        // Redirect to login page
+        navigate("/login");
+        return;
+      }
+
+      // If logout is successful (i.e., refresh token was valid), clear tokens
+      clearToken();
+      setIsAuthenticated(false);
+      setEmail(null);
+      localStorage.removeItem("email");
+
+      navigate("/login"); // Redirect to login page
+    } catch (error) {
+      console.error("Logout error:", error);
+      clearToken(); // Clear tokens in case of any error
+      navigate("/login"); // Redirect to login page
     }
   };
-  
+
+  // Function to refresh the token using the refresh token
+  const refreshToken = async () => {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) {
+      clearToken();
+      return;
+    }
+
+    try {
+      const res = await fetch("http://4.237.58.241:3000/user/refresh", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.bearerToken && data.refreshToken) {
+        setToken(data.bearerToken.token, data.refreshToken.token);
+        setIsAuthenticated(true);
+      } else {
+        clearToken();
+      }
+    } catch (err) {
+      console.error("Token refresh error:", err);
+      clearToken();
+    }
+  };
 
   // Check if the user is authenticated (i.e., if a token exists)
   useEffect(() => {
     const token = getToken();
     if (token) {
-      setIsAuthenticated(true);
+      setIsAuthenticated(true); // Token exists, user is authenticated
     }
     setLoading(false); // Stop loading when the check is complete
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>; // You can show a loading spinner here.
 
   return (
     <div>
@@ -109,8 +149,12 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
+      {/* Footer Section */}
+      <footer className="footer">
+        {/* <p>All data is from API</p> */}
+        <p>&copy; 2025 Krittaya Kruapat. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
-
 export default App;

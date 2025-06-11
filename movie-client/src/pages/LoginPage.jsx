@@ -1,24 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { setToken } from "../utils/auth";
+import { setToken } from "../utils/auth"; // Import the setToken function
+import './style.css'; 
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [expiredSession, setExpiredSession] = useState(false); // Track expired session
+  const [isFromPersonDetail, setIsFromPersonDetail] = useState(false); // Track if the user came from PersonDetailPage
   const navigate = useNavigate();
   const location = useLocation();
 
   // Get the redirectTo URL from query params (this could be the previous page they were trying to access)
   const queryParams = new URLSearchParams(location.search);
   const redirectTo = queryParams.get("redirectTo") || "/"; // Default to home page if not present
-  const isFromPersonDetail = queryParams.has("redirectTo"); // Check if user came from person detail page
+  const expired = queryParams.get("expired"); // Check if session expired
 
+  // Determine if the user came from PersonDetailPage by checking for "redirectTo" in the query params
   useEffect(() => {
     if (localStorage.getItem("token")) {
-        navigate(redirectTo); // If user is already logged in, go to the previous page
+      navigate(redirectTo); // If the user is already logged in, go to the previous page
     }
-  }, [navigate, redirectTo]);
+
+    // If expired=true, set the expired session state to true
+    if (expired === "true") {
+      setExpiredSession(true);
+    }
+
+    // Check if the user is coming from PersonDetailPage
+    if (queryParams.has("redirectTo")) {
+      setIsFromPersonDetail(true);
+    }
+  }, [navigate, redirectTo, expired, location.search]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,10 +63,18 @@ function LoginPage() {
 
   return (
     <div>
-      <h2>Login</h2>
-      {isFromPersonDetail && <p>Please login before viewing the details of the person.</p>} {/* Show message if coming from PersonDetailPage */}
-      <form onSubmit={handleLogin}>
+      <h1>Login</h1>
+      {/* Display message based on whether the user came from PersonDetailPage or the session has expired */}
+      {isFromPersonDetail && !localStorage.getItem("email") && (
+        <p>Please login before viewing the details of the person.</p>
+      )}
+      {expiredSession && localStorage.getItem("email") && (
+        <p>Please login again. Your session has expired.</p>
+      )}
+
+      <form onSubmit={handleLogin} className="login-form">
         <input
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email"
