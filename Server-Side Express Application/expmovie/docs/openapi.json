@@ -1,0 +1,1376 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "1.0.0",
+    "title": "Movie information API",
+    "description": "This API provides access to publicly available data on a limited number of movies published from the year 1990 from the Internet Movie Database and other sources. The API endpoints and their usage are described in detail below."
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Enter JWT Bearer token **_only_**"
+      }
+    },
+    "schemas": {
+      "InvalidYearFormat": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid year format. Format must be yyyy."
+          }
+        }
+      },
+      "MissingAuthHeader": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "message": {
+            "type": "string",
+            "example": "Authorization header ('Bearer token') not found"
+          }
+        }
+      },
+      "TokenExpired": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "message": {
+            "type": "string",
+            "example": "JWT token has expired"
+          }
+        }
+      },
+      "InvalidJWT": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid JWT token"
+          }
+        }
+      },
+      "InvalidPageFormat": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid page format. page must be a number."
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/movies/search": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Returns a paginated list of movie data filtered by title and/or year.",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Search term for the movie title.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "description": "4-digit year of the movie release (between 1900 and current year).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}$"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination (must be a positive integer).",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with paginated movie results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "example": "Star Trek: First Contact"
+                          },
+                          "year": {
+                            "type": "integer",
+                            "example": 1996
+                          },
+                          "imdbID": {
+                            "type": "string",
+                            "example": "tt0117731"
+                          },
+                          "imdbRating": {
+                            "type": "number",
+                            "example": 7.6
+                          },
+                          "rottenTomatoesRating": {
+                            "type": "number",
+                            "example": 92
+                          },
+                          "metacriticRating": {
+                            "type": "number",
+                            "example": 71
+                          },
+                          "classification": {
+                            "type": "string",
+                            "example": "PG-13"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "example": 6
+                        },
+                        "perPage": {
+                          "type": "integer",
+                          "example": 100
+                        },
+                        "currentPage": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "lastPage": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "prevPage": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "example": null
+                        },
+                        "nextPage": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "example": null
+                        },
+                        "from": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "to": {
+                          "type": "integer",
+                          "example": 6
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request due to invalid year or page format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid year format. Format must be yyyy."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Error executing search query"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/movies/data/{imdbID}": {
+      "get": {
+        "tags": [
+          "Movies"
+        ],
+        "description": "Fetch detailed movie data by IMDb ID. Query parameters are not allowed.",
+        "operationId": "getMovieData",
+        "parameters": [
+          {
+            "name": "imdbID",
+            "in": "path",
+            "required": true,
+            "description": "IMDb ID of the movie (e.g. tt0117731)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Movie data retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "example": "Star Trek: First Contact"
+                    },
+                    "year": {
+                      "type": "integer",
+                      "example": 1996
+                    },
+                    "runtime": {
+                      "type": "integer",
+                      "example": 111
+                    },
+                    "genres": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "Action",
+                        "Adventure",
+                        "Drama"
+                      ]
+                    },
+                    "country": {
+                      "type": "string",
+                      "example": "United States"
+                    },
+                    "principals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "nm0001772"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Patrick Stewart"
+                          },
+                          "category": {
+                            "type": "string",
+                            "example": "actor"
+                          },
+                          "characters": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "Picard"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "ratings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string",
+                            "example": "Internet Movie Database"
+                          },
+                          "value": {
+                            "type": "number",
+                            "example": 7.6
+                          }
+                        }
+                      }
+                    },
+                    "boxoffice": {
+                      "type": "integer",
+                      "example": 92027888
+                    },
+                    "poster": {
+                      "type": "string",
+                      "example": "https://m.media-amazon.com/images/M/MV5B.jpg"
+                    },
+                    "plot": {
+                      "type": "string",
+                      "example": "The Borg travel back in time intent on preventing Earth's first contact with an alien species..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters are not permitted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Query parameters are not permitted."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Movie not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Movie not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Database error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Database error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/people/{id}": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "description": "Get information about a person (actor, writer, director etc.) from their IMDB ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The person's IMDB ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An object containing data about that person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "Patrick Stewart"
+                    },
+                    "birthYear": {
+                      "type": "integer",
+                      "example": 1940
+                    },
+                    "deathYear": {
+                      "type": "integer",
+                      "example": null
+                    },
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "movieName": {
+                            "type": "string",
+                            "example": "Star Trek: First Contact"
+                          },
+                          "movieId": {
+                            "type": "string",
+                            "example": "tt0117731"
+                          },
+                          "category": {
+                            "type": "string",
+                            "example": "actor"
+                          },
+                          "characters": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "example": "Picard"
+                            }
+                          },
+                          "imdbRating": {
+                            "type": "number",
+                            "example": 7.6
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Query parameters are not allowed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Query parameters are not permitted."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Click on 'Schema' below to see the possible error responses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/MissingAuthHeader"
+                    },
+                    {
+                      "$ref": "#/components/schemas/TokenExpired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/InvalidJWT"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested person could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Person not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Database error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Creates a new user account. A request body containing the user to be registered must be sent.",
+        "requestBody": {
+          "description": "An object containing the email and password of the user to be registered.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "mike@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User created"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Request body incomplete - email and password needed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests, please try again later."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "description": "Log in to an existing user account. A request body containing the user credentials must be sent. The longExpiry bool is a setting for development use only that makes both tokens expire after a year.",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "description": "The credentials of the user to log in.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "mike@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  },
+                  "longExpiry": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "bearerExpiresInSeconds": {
+                    "type": "number",
+                    "example": 600
+                  },
+                  "refreshExpiresInSeconds": {
+                    "type": "number",
+                    "example": 86400
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Log in successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bearerToken": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "ajsonwebtoken"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "Bearer"
+                        },
+                        "expires_in": {
+                          "type": "number",
+                          "example": 600
+                        }
+                      }
+                    },
+                    "refreshToken": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "ajsonwebtoken"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "Refresh"
+                        },
+                        "expires_in": {
+                          "type": "number",
+                          "example": 86400
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid log in request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Request body incomplete - email and password needed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Log in failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/refresh": {
+      "post": {
+        "description": "Obtain a new bearer token by using a refresh token.",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "description": "The refresh token and optional new token expiry times.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "example": "ajsonwebtoken"
+                  },
+                  "bearerExpiresInSeconds": {
+                    "type": "number",
+                    "example": 600
+                  },
+                  "refreshExpiresInSeconds": {
+                    "type": "number",
+                    "example": 86400
+                  }
+                },
+                "required": [
+                  "refreshToken"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token successfully refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bearerToken": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "ajsonwebtoken"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "Bearer"
+                        },
+                        "expires_in": {
+                          "type": "number",
+                          "example": 600
+                        }
+                      }
+                    },
+                    "refreshToken": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "ajsonwebtoken"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "Refresh"
+                        },
+                        "expires_in": {
+                          "type": "number",
+                          "example": 86400
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid refresh request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Request body incomplete, refresh token required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: token invalid or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "JWT token has expired"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "description": "Log the user out by invalidating the refresh token.",
+        "tags": [
+          "Authentication"
+        ],
+        "requestBody": {
+          "description": "The refresh token to be invalidated.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "example": "ajsonwebtoken"
+                  }
+                },
+                "required": [
+                  "refreshToken"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token successfully invalidated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Token successfully invalidated"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid logout request (e.g. token missing or malformed)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Request body incomplete, refresh token required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized: token invalid or expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "JWT token has expired"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "example": "Too many requests, please try again later."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{email}/profile": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get User Profile",
+        "description": "Retrieve the user's profile. If the requester is authenticated and matches the profile owner, full details are returned. Otherwise, limited fields are shown.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "mike@gmail.com"
+            },
+            "description": "Email address of the user whose profile is requested."
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "email": "mike@gmail.com",
+                  "firstName": "Michael",
+                  "lastName": "Jordan",
+                  "dob": "1963-02-17",
+                  "address": "123 Fake Street, Springfield"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid or expired token",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Invalid JWT token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "User not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Update User Profile",
+        "description": "Update profile of the authenticated user. Users can only update their own profiles.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "mike@gmail.com"
+            },
+            "description": "Email address of the user whose profile is to be updated."
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "address": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "dob",
+                  "address"
+                ],
+                "example": {
+                  "firstName": "Michael",
+                  "lastName": "Jordan",
+                  "dob": "1963-02-17",
+                  "address": "123 Fake Street, Springfield"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "firstName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "lastName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "example": {
+                      "email": "mike@gmail.com",
+                      "firstName": "Michael",
+                      "lastName": "Jordan"
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "firstName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "lastName": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dob": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "format": "date"
+                      },
+                      "address": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "example": {
+                      "email": "mike@gmail.com",
+                      "firstName": "Michael",
+                      "lastName": "Jordan",
+                      "dob": "1963-02-17",
+                      "address": "123 Fake Street, Springfield"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Missing or invalid fields",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "MissingFields": {
+                    "summary": "Missing required fields",
+                    "value": {
+                      "error": true,
+                      "message": "Request body incomplete: firstName, lastName, dob and address are required."
+                    }
+                  },
+                  "InvalidDate": {
+                    "summary": "Invalid date format",
+                    "value": {
+                      "error": true,
+                      "message": "Invalid input: dob must be a real date in format YYYY-MM-DD."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Invalid or expired token",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Invalid JWT token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. User trying to update another user's profile",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "User not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

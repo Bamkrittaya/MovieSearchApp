@@ -1,0 +1,39 @@
+// authorization.js
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+const ACCESS_SECRET = process.env.ACCESS_SECRET;
+
+if (!ACCESS_SECRET) {
+    console.warn("ACCESS_SECRET not found in .env. Please define it.");
+}
+
+function checkToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const errorResponse = (message) =>
+        res.status(401).json({ error: true, message });
+
+    if (!authHeader) {
+        return errorResponse("Authorization header ('Bearer token') not found");
+    }
+
+    const [type, token] = authHeader.split(' ');
+
+    if (type !== 'Bearer' || !token) {
+        return errorResponse("Authorization header ('Bearer token') not found");
+    }
+
+    try {
+        const decoded = jwt.verify(token, ACCESS_SECRET);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        console.error("Token verification failed:", err.message);
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ error: true, message: 'Token has expired' });
+        }
+        return res.status(401).json({ error: true, message: 'Invalid JWT token' });
+    }
+}
+
+module.exports = { checkToken };
